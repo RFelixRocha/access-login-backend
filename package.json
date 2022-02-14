@@ -1,0 +1,9 @@
+{
+  "name": "api-with-validation",
+  "version": "1.0.0",
+  "description": "Validation access",
+  "main": "index.js",
+  "repository": "git@github.com:RFelixRocha/access-login-backend.git",
+  "author": "Raimundo Felix da Rocha",
+  "license": "MIT"
+}
