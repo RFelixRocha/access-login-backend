@@ -5,9 +5,11 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const res = require('express/lib/response')
 const User = require('./models/User')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 app.get('/', (request, response) => {
@@ -88,12 +90,12 @@ app.post('/auth/user', async (request, response) => {
     const secret = process.env.JWT_SECRET
     const token = jwt.sign(
       {
-        id: user._id
+        user: user._id
       },
       secret,
     )
 
-    return response.status(200).json({ msg: 'Autenticação realizada com sucesso', token })
+    return response.status(200).json({ msg: 'Autenticação realizada com sucesso', user, token })
 
   } catch (error) {
     console.log(error)
@@ -116,7 +118,7 @@ app.get('/user/:id', checkToken, async(request, response) => {
     return response.status(422).json({ msg: 'O usuário não encontrado!' })
   }
 
-  return response.status(200).json({ user })
+  return response.status(200).json({ data: user })
 
 })
 
