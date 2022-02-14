@@ -5,5 +5,18 @@
   "main": "index.js",
   "repository": "git@github.com:RFelixRocha/access-login-backend.git",
   "author": "Raimundo Felix da Rocha",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
