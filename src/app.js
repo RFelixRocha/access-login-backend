@@ -60,6 +60,88 @@ app.post('/auth/register', async (request, response) => {
 
 })
 
+app.post('/auth/user', async (request, response) => {
+
+  const { email, password } = request.body
+
+  if (!email) {
+    return response.status(422).json({ msg: 'O e-mail é obrigatório!' })
+  }
+
+  if (!password) {
+    return response.status(422).json({ msg: 'A senha é obrigatória!' })
+  }
+
+  const user = await User.findOne({ email: email})
+
+  if(!user) {
+    return response.status(422).json({ msg: 'Usuário não encontrado!' })
+  }
+
+  const checkPassword = await bcrypt.compare(password, user.password)
+
+  if (!checkPassword) {
+    return response.status(422).json({ msg: 'A senha não conferem!' })
+  }
+
+  try {
+    const secret = process.env.JWT_SECRET
+    const token = jwt.sign(
+      {
+        id: user._id
+      },
+      secret,
+    )
+
+    return response.status(200).json({ msg: 'Autenticação realizada com sucesso', token })
+
+  } catch (error) {
+    console.log(error)
+    response
+    .status(500)
+    .json({
+      msg: 'Aconteceu um erro no servidor, tente novamente mais tarde!'
+    })
+  }
+
+})
+
+app.get('/user/:id', checkToken, async(request, response) => {
+
+  const id = request.params.id
+
+  const user = await User.findById(id, '-password')
+
+  if (!user) {
+    return response.status(422).json({ msg: 'O usuário não encontrado!' })
+  }
+
+  return response.status(200).json({ user })
+
+})
+
+function checkToken (request, response, next) {
+
+  const authHeader = request.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (!token) {
+    return response.status(401).json({ msg: 'Acesso negado!' })
+  }
+
+  try {
+
+    const secret = process.env.JWT_SECRET
+
+    jwt.verify(token, secret)
+    next()
+    
+  } catch (error) {
+    response.status(400).json({ msg: 'Token inválido!' })
+  }
+
+}
+
 const db_url = process.env.DB_URL
 
 mongoose
